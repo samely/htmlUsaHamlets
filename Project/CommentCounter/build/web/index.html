@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Counter</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">        
+
+        <script>
+            function count() {
+                var com = null;
+                com = document.getElementById('txtComment').value;
+
+                var x = new XMLHttpRequest();
+                x.onreadystatechange = function () {
+                    if (x.readyState == 4 && x.status == 200) {
+                        myFunction(x);
+                    }
+                };
+
+                x.open("GET", "https://api.openstreetmap.org/api/0.6/changesets?display_name=samely&time=2016-04-30T01%3A33%3A18Z", true);
+                x.send();
+
+                function myFunction(xml) {
+                    var x, i, xmlDoc, txt, c;
+                    xmlDoc = xml.responseXML;
+                    txt = "";
+                    c = 0;
+
+                    x = xmlDoc.getElementsByTagName('tag');
+                    for (i = 0; i < x.length; i++) {
+                        if (x[i].getAttribute('k') === 'comment') {
+
+                            //txt = x[i].getAttribute('v') + "<br>";
+                            //document.write(txt);
+
+                            if (x[i].getAttribute('v').includes(com)) {
+                                c++;
+                            }
+                        }
+                    }
+                    
+                    document.getElementById('countingInfo').innerHTML = "</br> Number of changesets: "+c+"</br>";
+                }
+            }
+        </script>    
+    </head>
+    <body>  
+        <div>
+            <input type="text" id="txtComment" name="txtComment" required placeholder="Comment for searching"/>
+            <button type="button" id="btnCount" onclick="count()">Count!</button>
+        </div>
+
+        <div id="countingInfo">
+
+        </div>
+    </body>
+</html>
